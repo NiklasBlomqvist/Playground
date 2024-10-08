@@ -9,16 +9,37 @@ public class MouseEvents : MonoBehaviour
 
     private ISelectable _previousFurniture;
     private ISelectable _currentSelectedSelectable;
+    private bool _drag;
+    private Vector3 _previousMousePosition;
 
     private void Update()
     {
-        HandleHoverAndSelection();
+        HandleMouseEvents();
+
+        if (_drag)
+        {
+            _currentSelectedSelectable?.Drag(GetMouseWorldPosition());
+        }
+    }
+    
+    private Vector3 GetMouseWorldPosition()
+    {
+        var ray = _camera.ScreenPointToRay(Input.mousePosition);
+        var xyPlane = new Plane(Vector3.up, Vector3.zero);
+
+        if (xyPlane.Raycast(ray, out float enter))
+        {
+            var hitPoint = ray.GetPoint(enter);
+            return new Vector3(hitPoint.x, 0, hitPoint.z); // Ignore y-axis
+        }
+
+        return Vector3.zero;
     }
 
     /// <summary>
     /// Handle the hover and selection of furniture.
     /// </summary>
-    private void HandleHoverAndSelection()
+    private void HandleMouseEvents()
     {
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
 
@@ -29,6 +50,10 @@ public class MouseEvents : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 HandleSelection(hit.transform.GetComponentInParent<ISelectable>());
+                _drag = true;
+                
+                Vector3 mouseWorldPosition = GetMouseWorldPosition();
+                Debug.Log("Mouse World Position: " + mouseWorldPosition);
             }
         }
         else
@@ -40,6 +65,9 @@ public class MouseEvents : MonoBehaviour
                 ClearSelection();
             }
         }
+
+        if (Input.GetMouseButtonUp(0))
+            _drag = false;
     }
 
     /// <summary>

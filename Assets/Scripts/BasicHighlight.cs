@@ -32,4 +32,10 @@ public class BasicHighlight : MonoBehaviour, ISelectable
             r.material = click ? _selectedMaterial : _defaultMaterial;
         }
     }
+
+    public void Drag(Vector3 targetPosition)
+    {
+        targetPosition.y = transform.position.y; // Ignore y-axis movement.
+        transform.position = targetPosition;
+    }
 }
