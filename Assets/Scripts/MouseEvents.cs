@@ -1,32 +1,71 @@
-using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MouseEvents : MonoBehaviour
 {
-    private void Hover(bool enter)
+    private const float RaycastRadius = 0.1f; 
+    
+    private Camera _camera;
+    private Furniture _previousFurniture;
+    private Furniture _currentSelectedFurniture;
+
+    private void Awake()
     {
-        foreach (var r in GetComponentsInChildren<Renderer>())
+        _camera = Camera.main;
+
+        if (_camera == null)
         {
-            r.material.color = enter ? Color.red : Color.white;
+            Debug.LogError("No camera found in scene.");
         }
     }
-    
-    private void OnMouseEnter()
-    {
-        Hover(true);
-    }
 
-
-    private void OnMouseExit()
+    private void Update()
     {
-        Hover(false);
-    }
+        var ray = _camera.ScreenPointToRay(Input.mousePosition);
 
-    private void OnMouseDown()
-    {
-        foreach (var r in GetComponentsInChildren<Renderer>())
+        if (Physics.SphereCast(ray, RaycastRadius, out var hit))
         {
-            r.material.color = Color.yellow;
-        }  
+            var currentFurniture = hit.transform.GetComponentInParent<Furniture>();
+
+            if (currentFurniture != null) // Current hover is a furniture.
+            {
+                if (currentFurniture != _previousFurniture) // Current hover is a different furniture.
+                {
+                    currentFurniture.Hover(true);
+
+                    _previousFurniture?.Hover(false);
+                    _previousFurniture = currentFurniture;  
+                }
+                
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _currentSelectedFurniture?.Click(false);
+                    currentFurniture.Click(true);
+                    _currentSelectedFurniture = currentFurniture;
+                }
+            }
+            else
+            {
+                _previousFurniture?.Hover(false);
+                _previousFurniture = null;
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    _currentSelectedFurniture?.Click(false);
+                    _currentSelectedFurniture = null;
+                }
+            }
+        }
+        else
+        {
+            _previousFurniture?.Hover(false);
+            _previousFurniture = null;
+            
+            if (Input.GetMouseButtonDown(0))
+            {
+                _currentSelectedFurniture?.Click(false);
+                _currentSelectedFurniture = null;
+            }
+        }
     }
 }
