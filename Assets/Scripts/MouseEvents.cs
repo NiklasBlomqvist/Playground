@@ -1,71 +1,101 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MouseEvents : MonoBehaviour
 {
-    private const float RaycastRadius = 0.1f; 
-    
-    private Camera _camera;
+    [SerializeField] private Camera _camera;
+
+    [SerializeField] private float RaycastRadius = 0.1f;
+
     private Furniture _previousFurniture;
     private Furniture _currentSelectedFurniture;
 
-    private void Awake()
+    private void Update()
     {
-        _camera = Camera.main;
-
-        if (_camera == null)
-        {
-            Debug.LogError("No camera found in scene.");
-        }
+        HandleHoverAndSelection();
     }
 
-    private void Update()
+    /// <summary>
+    /// Handle the hover and selection of furniture.
+    /// </summary>
+    private void HandleHoverAndSelection()
     {
         var ray = _camera.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.SphereCast(ray, RaycastRadius, out var hit))
         {
-            var currentFurniture = hit.transform.GetComponentInParent<Furniture>();
+            HandleHover(hit.transform.GetComponentInParent<Furniture>());
 
-            if (currentFurniture != null) // Current hover is a furniture.
+            if (Input.GetMouseButtonDown(0))
             {
-                if (currentFurniture != _previousFurniture) // Current hover is a different furniture.
-                {
-                    currentFurniture.Hover(true);
-
-                    _previousFurniture?.Hover(false);
-                    _previousFurniture = currentFurniture;  
-                }
-                
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _currentSelectedFurniture?.Click(false);
-                    currentFurniture.Click(true);
-                    _currentSelectedFurniture = currentFurniture;
-                }
-            }
-            else
-            {
-                _previousFurniture?.Hover(false);
-                _previousFurniture = null;
-
-                if (Input.GetMouseButtonDown(0))
-                {
-                    _currentSelectedFurniture?.Click(false);
-                    _currentSelectedFurniture = null;
-                }
+                HandleSelection(hit.transform.GetComponentInParent<Furniture>());
             }
         }
         else
         {
-            _previousFurniture?.Hover(false);
-            _previousFurniture = null;
-            
+            ClearHover();
+
             if (Input.GetMouseButtonDown(0))
             {
-                _currentSelectedFurniture?.Click(false);
-                _currentSelectedFurniture = null;
+                ClearSelection();
             }
         }
+    }
+
+    /// <summary>
+    /// Handle the hover of furniture.
+    /// </summary>
+    /// <param name="currentFurniture"></param>
+    private void HandleHover(Furniture currentFurniture)
+    {
+        if (currentFurniture != null)
+        {
+            if (currentFurniture != _previousFurniture)
+            {
+                currentFurniture.Hover(true);
+                _previousFurniture?.Hover(false);
+                _previousFurniture = currentFurniture;
+            }
+        }
+        else
+        {
+            ClearHover();
+        }
+    }
+
+    /// <summary>
+    /// Handle the selection of furniture.
+    /// </summary>
+    /// <param name="currentFurniture"></param>
+    private void HandleSelection(Furniture currentFurniture)
+    {
+        _currentSelectedFurniture?.Click(false);
+
+        if (currentFurniture != null)
+        {
+            currentFurniture.Click(true);
+            _currentSelectedFurniture = currentFurniture;
+        }
+        else
+        {
+            _currentSelectedFurniture = null;
+        }
+    }
+
+    /// <summary>
+    /// Clear the hover of furniture.
+    /// </summary>
+    private void ClearHover()
+    {
+        _previousFurniture?.Hover(false);
+        _previousFurniture = null;
+    }
+
+    /// <summary>
+    ///  Clear the selection of furniture.
+    /// </summary>
+    private void ClearSelection()
+    {
+        _currentSelectedFurniture?.Click(false);
+        _currentSelectedFurniture = null;
     }
 }

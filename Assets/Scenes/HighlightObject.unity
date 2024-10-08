@@ -750,6 +750,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 754027d48cbbe3340a5dd50f41906d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 1353454340}
+  RaycastRadius: 0.1
 --- !u!1 &1114399429
 GameObject:
   m_ObjectHideFlags: 0
