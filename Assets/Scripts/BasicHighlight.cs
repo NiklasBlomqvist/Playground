@@ -4,17 +4,24 @@ using UnityEngine;
 public class BasicHighlight : MonoBehaviour, ISelectable
 {
     private Renderer[] _renderers;
+    private Material _defaultMaterial;
+    private Material _hoverMaterial;
+    private Material _selectedMaterial;
 
     private void Awake()
     {
         _renderers = gameObject.GetComponentsInChildren<Renderer>();
+        _defaultMaterial = _renderers[0].material;
+        
+        _hoverMaterial = Resources.Load<Material>("Hover");
+        _selectedMaterial = Resources.Load<Material>("Selected");
     }
 
     public void Hover(bool hover)
     {
         foreach (var r in _renderers)
         {
-            r.material.color = hover ? Color.red : Color.white;
+            r.material = hover ? _hoverMaterial : _defaultMaterial;
         }
     }
 
@@ -22,7 +29,7 @@ public class BasicHighlight : MonoBehaviour, ISelectable
     {
         foreach (var r in _renderers)
         {
-            r.material.color = click ? Color.yellow : Color.white;
+            r.material = click ? _selectedMaterial : _defaultMaterial;
         }
     }
 }
