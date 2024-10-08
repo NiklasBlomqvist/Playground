@@ -1,6 +1,7 @@
+using Playground;
 using UnityEngine;
 
-public class Furniture : MonoBehaviour
+public class BasicHighlight : MonoBehaviour, ISelectable
 {
     private Renderer[] _renderers;
 

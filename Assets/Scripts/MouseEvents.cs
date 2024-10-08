@@ -1,3 +1,4 @@
+using Playground;
 using UnityEngine;
 
 public class MouseEvents : MonoBehaviour
@@ -6,8 +7,8 @@ public class MouseEvents : MonoBehaviour
 
     [SerializeField] private float RaycastRadius = 0.1f;
 
-    private Furniture _previousFurniture;
-    private Furniture _currentSelectedFurniture;
+    private ISelectable _previousFurniture;
+    private ISelectable _currentSelectedSelectable;
 
     private void Update()
     {
@@ -23,11 +24,11 @@ public class MouseEvents : MonoBehaviour
 
         if (Physics.SphereCast(ray, RaycastRadius, out var hit))
         {
-            HandleHover(hit.transform.GetComponentInParent<Furniture>());
+            HandleHover(hit.transform.GetComponentInParent<ISelectable>());
 
             if (Input.GetMouseButtonDown(0))
             {
-                HandleSelection(hit.transform.GetComponentInParent<Furniture>());
+                HandleSelection(hit.transform.GetComponentInParent<ISelectable>());
             }
         }
         else
@@ -44,16 +45,16 @@ public class MouseEvents : MonoBehaviour
     /// <summary>
     /// Handle the hover of furniture.
     /// </summary>
-    /// <param name="currentFurniture"></param>
-    private void HandleHover(Furniture currentFurniture)
+    /// <param name="currentSelectable"></param>
+    private void HandleHover(ISelectable currentSelectable)
     {
-        if (currentFurniture != null)
+        if (currentSelectable != null)
         {
-            if (currentFurniture != _previousFurniture)
+            if (currentSelectable != _previousFurniture)
             {
-                currentFurniture.Hover(true);
+                currentSelectable.Hover(true);
                 _previousFurniture?.Hover(false);
-                _previousFurniture = currentFurniture;
+                _previousFurniture = currentSelectable;
             }
         }
         else
@@ -65,19 +66,19 @@ public class MouseEvents : MonoBehaviour
     /// <summary>
     /// Handle the selection of furniture.
     /// </summary>
-    /// <param name="currentFurniture"></param>
-    private void HandleSelection(Furniture currentFurniture)
+    /// <param name="currentSelectable"></param>
+    private void HandleSelection(ISelectable currentSelectable)
     {
-        _currentSelectedFurniture?.Click(false);
+        _currentSelectedSelectable?.Click(false);
 
-        if (currentFurniture != null)
+        if (currentSelectable != null)
         {
-            currentFurniture.Click(true);
-            _currentSelectedFurniture = currentFurniture;
+            currentSelectable.Click(true);
+            _currentSelectedSelectable = currentSelectable;
         }
         else
         {
-            _currentSelectedFurniture = null;
+            _currentSelectedSelectable = null;
         }
     }
 
@@ -95,7 +96,7 @@ public class MouseEvents : MonoBehaviour
     /// </summary>
     private void ClearSelection()
     {
-        _currentSelectedFurniture?.Click(false);
-        _currentSelectedFurniture = null;
+        _currentSelectedSelectable?.Click(false);
+        _currentSelectedSelectable = null;
     }
 }
