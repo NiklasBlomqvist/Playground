@@ -58,7 +58,7 @@ public class MouseEvents : MonoBehaviour
         if (newSelectable != null)
         {
             _currentSelection = newSelectable;
-            _currentSelection.Click(true);
+            _currentSelection.Select(true);
         }
     }
 
@@ -71,7 +71,7 @@ public class MouseEvents : MonoBehaviour
 
     private void ClearCurrentSelection()
     {
-        _currentSelection?.Click(false);
+        _currentSelection?.Select(false);
         _currentSelection = null;
     }
 }

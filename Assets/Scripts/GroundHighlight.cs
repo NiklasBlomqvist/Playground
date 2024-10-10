@@ -18,9 +18,9 @@ public class GroundHighlight : MonoBehaviour, ISelectable
         hoverObject.SetActive(hover);
     }
 
-    public void Click(bool click)
+    public void Select(bool select)
     {
         hoverObject.SetActive(false);
-        selectedObject.SetActive(click);
+        selectedObject.SetActive(select);
     }
 }

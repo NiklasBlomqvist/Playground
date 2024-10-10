@@ -25,11 +25,11 @@ public class BasicHighlight : MonoBehaviour, ISelectable
         }
     }
 
-    public void Click(bool click)
+    public void Select(bool select)
     {
         foreach (var r in _renderers)
         {
-            r.material = click ? _selectedMaterial : _defaultMaterial;
+            r.material = select ? _selectedMaterial : _defaultMaterial;
         }
     }
 }
