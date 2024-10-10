@@ -44,9 +44,8 @@ public class MouseEvents : MonoBehaviour
         {
             ClearCurrentHover();
         }
-        else if (newHover != _currentHover)
+        else if (newHover != _currentHover && newHover != _currentSelection)
         {
-            ClearCurrentHover();
             _currentHover = newHover;
             _currentHover.Hover(true);
         }
@@ -65,6 +64,7 @@ public class MouseEvents : MonoBehaviour
 
     private void ClearCurrentHover()
     {
+        if (_currentSelection == _currentHover) return; // Prevent clearing hover if it's the same as selection.
         _currentHover?.Hover(false);
         _currentHover = null;
     }
